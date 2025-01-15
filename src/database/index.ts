@@ -1,19 +1,10 @@
-import { PostgresDatabaseAdapter } from "@elizaos/adapter-postgres";
-import { SqliteDatabaseAdapter } from "@elizaos/adapter-sqlite";
-import Database from "better-sqlite3";
-import path from "path";
+import {SqlJsDatabaseAdapter} from "@elizaos/adapter-sqljs";
+import initSqlJs from "sql.js";
 
-export function initializeDatabase(dataDir: string) {
-  if (process.env.POSTGRES_URL) {
-    const db = new PostgresDatabaseAdapter({
-      connectionString: process.env.POSTGRES_URL,
-    });
-    return db;
-  } else {
-    const filePath =
-      process.env.SQLITE_FILE ?? path.resolve(dataDir, "db.sqlite");
-    // ":memory:";
-    const db = new SqliteDatabaseAdapter(new Database(filePath));
-    return db;
-  }
+export async function initializeDatabase() {
+
+  const SQL = await initSqlJs();
+
+  const db = new SQL.Database();
+  return new SqlJsDatabaseAdapter(db);
 }
